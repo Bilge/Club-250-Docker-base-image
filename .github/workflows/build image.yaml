@@ -1,0 +1,34 @@
+name: Build Docker image
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  registry: ghcr.io
+
+jobs:
+  Build_image:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log in to the container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Declare image name
+        run: image=${GITHUB_REPOSITORY,,} && >>"$GITHUB_ENV" echo image=${image%-*}
+
+      - name: Build Docker image
+        run: docker build --tag ${{ env.registry }}/${{ env.image }} .
+
+      - name: Push Docker image
+        run: docker push ${{ env.registry }}/${{ env.image }}
