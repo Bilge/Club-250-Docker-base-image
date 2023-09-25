@@ -1,4 +1,4 @@
-FROM php:8.1.22-fpm-alpine
+FROM php:8.1.23-fpm-alpine
 
 RUN \
     apk add icu icu-dev libxslt libxslt-dev libffi libffi-dev libpq libpq-dev gmp gmp-dev \
@@ -19,3 +19,6 @@ RUN \
         gmp \
     # All dev packages can be removed post-compile, however the main packages cannot.
     && apk del icu-dev libxslt-dev libffi-dev libpq-dev gmp-dev
+
+RUN wget -O- https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions \
+    | sh -s uv
