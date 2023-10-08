@@ -1,4 +1,4 @@
-FROM php:8.1.24-fpm-alpine
+FROM php:8.2.11-fpm-alpine
 
 RUN \
     apk add icu icu-dev libxslt libxslt-dev libffi libffi-dev libpq libpq-dev gmp gmp-dev \
