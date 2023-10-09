@@ -5,6 +5,8 @@ RUN \
     && docker-php-ext-install opcache \
         # Number formatting in our own application templates requires intl.
         intl \
+        # symfony/messenger requires PCNTL for graceful shutdown of queue workers.
+        pcntl \
         # Pheanstalk requires sockets extension otherwise it throws SocketException with "Unknown error" (CLUB-250-B6).
         sockets \
         # lorenzo/pinky requires XSL extension.
