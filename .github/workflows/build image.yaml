@@ -28,7 +28,7 @@ jobs:
         run: image=${GITHUB_REPOSITORY,,} && >>"$GITHUB_ENV" echo image=${image%-*}
 
       - name: Build Docker image
-        run: docker build --tag ${{ env.registry }}/${{ env.image }} .
+        run: docker build --tag ${{ env.registry }}/${{ env.image }}:debian - <Debian.Dockerfile
 
       - name: Push Docker image
-        run: docker push ${{ env.registry }}/${{ env.image }}
+        run: docker push ${{ env.registry }}/${{ env.image }}:debian
