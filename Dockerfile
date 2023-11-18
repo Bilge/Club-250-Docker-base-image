@@ -21,3 +21,7 @@ RUN \
         gmp \
     # All dev packages can be removed post-compile, however the main packages cannot.
     && apk del icu-dev libxslt-dev libffi-dev libpq-dev gmp-dev
+
+# Install Composer.
+RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/main/web/installer -qO- |\
+    php -- --install-dir /usr/local/bin --filename composer
