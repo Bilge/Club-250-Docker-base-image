@@ -41,3 +41,8 @@ jobs:
 
       - name: Push Docker image (${{ env.tag }})
         run: docker push ${{ env.tag }}
+
+      - name: Push "latest" tag
+        run: docker tag "$tag" ${latest=${{ env.registry }}/${{ env.image }}}
+          && docker push "$latest"
+        if: ${{ matrix.distro == 'Alpine' }}
