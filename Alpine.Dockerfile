@@ -1,7 +1,7 @@
 FROM php:8.2.12-fpm-alpine
 
 RUN \
-    apk add icu icu-dev libxslt libxslt-dev libffi libffi-dev libpq libpq-dev gmp gmp-dev \
+    apk add icu icu-dev jemalloc libxslt libxslt-dev libffi libffi-dev libpq libpq-dev gmp gmp-dev \
     && docker-php-ext-install opcache \
         # Number formatting in our own application templates requires intl.
         intl \
@@ -22,6 +22,12 @@ RUN \
     # All dev packages can be removed post-compile, however the main packages cannot.
     && apk del icu-dev libxslt-dev libffi-dev libpq-dev gmp-dev
 
-# Install Composer.
-RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/main/web/installer -qO- |\
-    php -- --install-dir /usr/local/bin --filename composer
+# Replace the slow musl allocator.
+ENV LD_PRELOAD=libjemalloc.so.2
+
+RUN \
+    # Validate jemalloc preloaded.
+    ldd `which php` | grep libjemalloc.so.2 && \
+    # Install Composer.
+    wget https://raw.githubusercontent.com/composer/getcomposer.org/main/web/installer -qO- |\
+        php -- --install-dir /usr/local/bin --filename composer
