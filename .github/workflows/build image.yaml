@@ -14,6 +14,12 @@ jobs:
     permissions:
       packages: write
 
+    strategy:
+      matrix:
+        distro:
+          - Alpine
+          - Debian
+
     steps:
       - uses: actions/checkout@v3
 
@@ -25,10 +31,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Declare image name
-        run: image=${GITHUB_REPOSITORY,,} && >>"$GITHUB_ENV" echo image=${image%-*}
+        run: image=${GITHUB_REPOSITORY,,} && <<<image=${image%-*} tee -a "$GITHUB_ENV"
 
-      - name: Build Docker image
-        run: docker build --tag ${{ env.registry }}/${{ env.image }}:debian - <Debian.Dockerfile
+      - name: Build Docker image (${{ matrix.distro }})
+        run: docker build --tag ${tag=${{ env.registry }}/${{ env.image }}:${distro,,}} - <$distro.Dockerfile
+          && <<<tag=$tag tee -a "$GITHUB_ENV"
+        env:
+          distro: ${{ matrix.distro }}
 
-      - name: Push Docker image
-        run: docker push ${{ env.registry }}/${{ env.image }}:debian
+      - name: Push Docker image (${{ env.tag }})
+        run: docker push ${{ env.tag }}
