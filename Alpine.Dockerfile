@@ -1,4 +1,4 @@
-FROM php:8.2.14-fpm-alpine
+FROM php:8.2.15-fpm-alpine
 
 RUN \
     apk add icu icu-dev jemalloc libxslt libxslt-dev libffi libffi-dev libpq libpq-dev gmp gmp-dev \
