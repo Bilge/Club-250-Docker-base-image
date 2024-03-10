@@ -1,4 +1,4 @@
-FROM php:8.2.15-fpm
+FROM php:8.2.16-fpm
 
 RUN apt-get update && \
     apt-get --assume-yes install libicu-dev libxslt1.1 libxslt1-dev libffi-dev libpq5 libpq-dev libgmp-dev unzip \
