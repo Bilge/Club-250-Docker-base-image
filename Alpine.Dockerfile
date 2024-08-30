@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/php/tags?name=-fpm-alpine
-FROM php:8.2.22-fpm-alpine
+FROM php:8.2.23-fpm-alpine
 
 RUN \
     apk add icu icu-dev jemalloc libxslt libxslt-dev libffi libffi-dev libpq libpq-dev gmp gmp-dev \
