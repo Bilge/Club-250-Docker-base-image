@@ -19,6 +19,12 @@ jobs:
         distro:
           - Alpine
           - Debian
+        target:
+          - prod
+          - dev
+        exclude:
+          - distro: Debian
+            target: dev
 
     steps:
       - uses: actions/checkout@v4
@@ -34,10 +40,16 @@ jobs:
         run: image=${GITHUB_REPOSITORY,,} && <<<image=${image%-*} tee -a "$GITHUB_ENV"
 
       - name: Build Docker image (${{ matrix.distro }})
-        run: docker build --tag ${tag=${{ env.registry }}/${{ env.image }}:${distro,,}} - <$distro.Dockerfile
+        run: <$distro.Dockerfile docker build --target $target -
+          --tag ${tag=${{ env.registry }}/${{ env.image }}:$([[ $target = dev ]] && echo $target || echo ${distro,,})}
           && <<<tag=$tag tee -a "$GITHUB_ENV"
         env:
           distro: ${{ matrix.distro }}
+          target: ${{ matrix.target }}
+
+      - name: Validate image
+        run: ${{ matrix.target == 'prod' && '!' || '' }}
+          [[ $(docker run --rm --pull=never ${{ env.tag }} php -m | grep -Fxm1 xdebug) ]]
 
       - name: Push Docker image (${{ env.tag }})
         run: docker push ${{ env.tag }}
@@ -45,4 +57,4 @@ jobs:
       - name: Push "latest" tag
         run: docker tag "$tag" ${latest=${{ env.registry }}/${{ env.image }}}
           && docker push "$latest"
-        if: ${{ matrix.distro == 'Alpine' }}
+        if: matrix.target == 'prod' && matrix.distro == 'Alpine'
